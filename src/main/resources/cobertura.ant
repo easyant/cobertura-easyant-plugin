@@ -38,7 +38,7 @@
         <delete file="${cobertura.datafile}" />
 
         <!-- do instrumentation -->
-        <cobertura-instrument todir="${cobertura.instrumented.classes.dir}" datafile="${coverage.datafile}">
+        <cobertura-instrument todir="${cobertura.instrumented.classes.dir}" datafile="${cobertura.datafile}">
             <includeClasses regex="${cobertura.include.classes.regex}" />
             <excludeClasses regex="${cobertura.exclude.classes.regex}" />
 
@@ -47,11 +47,11 @@
         </cobertura-instrument>
         <!-- contribute to test runtime classpath and prepend instrumented classes -->
         <ea:path pathid="run.test.classpath" overwrite="prepend">
-            <fileset dir="${cobertura.datafile}"/>
+            <fileset dir="${cobertura.instrumented.classes.dir}"/>
         </ea:path>
     </target>
 
     <target name="cobertura:run" depends="cobertura:instrument">
-        <cobertura-report format="html" destdir="${target.report.dir}" srcdir="${src.main.java}" datafile="${coverage.datafile}"/>
+        <cobertura-report format="html" destdir="${target.report.dir}" srcdir="${src.main.java}" datafile="${cobertura.datafile}"/>
     </target>
 </project>
