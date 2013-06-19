@@ -25,18 +25,18 @@
     
     <target name="cobertura:init">
         <taskdef classpathref="cobertura.classpath" resource="tasks.properties" classpathref="org.apache.easyant.plugins.cobertura.classpath" />
+        <ea:parameter property="cobertura.instrumented.classes.dir" description="Specify the output directory for the instrumented classes" default="${target}/coverage"/>
+        <ea:parameter property="cobertura.datafile" description="Specify the name of the file to use for storing the metadata about your classes. This is a single file containing serialized Java classes. It contains information about the names of classes in your project, their method names, line numbers, etc. It will be updated as your tests are run, and will be referenced by the Cobertura reporting command." default="${cobertura.instrumented.classes.dir}/cobertura.ser"/>
     </target>
 
     <target name="cobertura:instrument" depends="cobertura:init,compile,abstract-test:init">
-        <property name="coverage.dir" value="${target}/coverage"/>
-        <property name="coverage.datafile" value="${coverage.dir}/cobertura.ser"/>
-        <mkdir dir="${coverage.dir}"/>
+        <mkdir dir="${cobertura.instrumented.classes.dir}"/>
 
         <!-- delete previous coverage data file -->
-        <delete file="${coverage.datafile}" />
+        <delete file="${cobertura.datafile}" />
 
         <!-- do instrumentation -->
-        <cobertura-instrument todir="${coverage.dir}" datafile="${coverage.datafile}">
+        <cobertura-instrument todir="${cobertura.instrumented.classes.dir}" datafile="${coverage.datafile}">
             <fileset dir="${target.test.classes}" erroronmissingdir="false"/>
             <fileset dir="${target.test.integration.classes}" erroronmissingdir="false"/>
         </cobertura-instrument>
