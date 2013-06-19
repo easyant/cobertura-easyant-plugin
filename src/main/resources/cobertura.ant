@@ -24,7 +24,6 @@
     -->
     
     <target name="cobertura:init">
-        <ivy:cachepath pathid="cobertura.classpath" inline="true" organisation="net.sourceforge.cobertura" module="cobertura" revision="1.9.4.1" conf="default" settingsRef="easyant.ivy.instance"/>
         <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
     </target>
 

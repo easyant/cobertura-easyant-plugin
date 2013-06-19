@@ -39,9 +39,6 @@
         <artifact name="cobertura" type="ant"/>
     </publications>
     <dependencies>
-        <!-- your project dependencies goes here -->
-        <!--
-            <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
-        -->
+        <dependency org="net.sourceforge.cobertura" name="cobertura" rev="1.9.4.1" />
     </dependencies>
 </ivy-module>
