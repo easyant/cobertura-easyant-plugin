@@ -47,7 +47,7 @@
         </cobertura-instrument>
         <!-- contribute to test runtime classpath and prepend instrumented classes -->
         <ea:path pathid="run.test.classpath" overwrite="prepend">
-            <fileset dir="${coverage.dir}"/>
+            <fileset dir="${cobertura.datafile}"/>
         </ea:path>
     </target>
 
