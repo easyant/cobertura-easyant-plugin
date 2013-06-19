@@ -23,10 +23,31 @@
         <ea:core-version requiredrevision="[0.7,+]" />
     -->
     
-    <!-- Sample init target -->
     <target name="cobertura:init">
-        <!-- you should  remove this echo message -->
-        <echo level="debug">This is the init target of cobertura</echo>
+        <ivy:cachepath pathid="cobertura.classpath" inline="true" organisation="net.sourceforge.cobertura" module="cobertura" revision="1.9.4.1" conf="default" settingsRef="easyant.ivy.instance"/>
+        <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
     </target>
-    
+
+    <target name="cobertura:instrument" depends="cobertura:init,compile,abstract-test:init">
+        <property name="coverage.dir" value="${target}/coverage"/>
+        <property name="coverage.datafile" value="${coverage.dir}/cobertura.ser"/>
+        <mkdir dir="${coverage.dir}"/>
+
+        <!-- delete previous coverage data file -->
+        <delete file="${coverage.datafile}" />
+
+        <!-- do instrumentation -->
+        <cobertura-instrument todir="${coverage.dir}" datafile="${coverage.datafile}">
+            <fileset dir="${target.test.classes}" erroronmissingdir="false"/>
+            <fileset dir="${target.test.integration.classes}" erroronmissingdir="false"/>
+        </cobertura-instrument>
+        <!-- contribute to test runtime classpath and prepend instrumented classes -->
+        <ea:path pathid="run.test.classpath" overwrite="prepend">
+            <fileset dir="${coverage.dir}"/>
+        </ea:path>
+    </target>
+
+    <target name="cobertura:run" depends="cobertura:instrument">
+        <cobertura-report format="html" destdir="${target.report.dir}" srcdir="${src.main.java}" datafile="${coverage.datafile}"/>
+    </target>
 </project>
