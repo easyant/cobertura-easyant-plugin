@@ -27,7 +27,7 @@
     <ea:plugin module="abstract-compile" revision="0.9"/>
 
     <target name="cobertura:init">
-        <taskdef classpathref="cobertura.classpath" resource="tasks.properties" classpathref="org.apache.easyant.plugins.cobertura.classpath" />
+        <taskdef resource="tasks.properties" classpathref="org.apache.easyant.plugins#cobertura.classpath" />
         <ea:parameter property="cobertura.instrumented.classes.dir" description="Specify the output directory for the instrumented classes" default="${target}/coverage"/>
         <ea:parameter property="cobertura.datafile" description="Specify the name of the file to use for storing the metadata about your classes. This is a single file containing serialized Java classes. It contains information about the names of classes in your project, their method names, line numbers, etc. It will be updated as your tests are run, and will be referenced by the Cobertura reporting command." default="${cobertura.instrumented.classes.dir}/cobertura.ser"/>
         <ea:parameter property="cobertura.include.classes.regex" description="Include regex pattern to select files you want to be instrumented" default=".*"/>
