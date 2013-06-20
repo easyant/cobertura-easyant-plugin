@@ -34,7 +34,7 @@
         <ea:parameter property="cobertura.exclude.classes.regex" description="Exclude regex pattern to ignore files to be instrumented" default=".*\.Test.*"/>
     </target>
 
-    <target name="cobertura:instrument" depends="cobertura:init,compile,abstract-test:init">
+    <target name="cobertura:instrument" depends="cobertura:init,abstract-compile:compile,abstract-test:init">
         <mkdir dir="${cobertura.instrumented.classes.dir}"/>
 
         <!-- delete previous coverage data file -->
