@@ -32,6 +32,11 @@
         <ea:parameter property="cobertura.datafile" description="Specify the name of the file to use for storing the metadata about your classes. This is a single file containing serialized Java classes. It contains information about the names of classes in your project, their method names, line numbers, etc. It will be updated as your tests are run, and will be referenced by the Cobertura reporting command." default="${cobertura.instrumented.classes.dir}/cobertura.ser"/>
         <ea:parameter property="cobertura.include.classes.regex" description="Include regex pattern to select files you want to be instrumented" default=".*"/>
         <ea:parameter property="cobertura.exclude.classes.regex" description="Exclude regex pattern to ignore files to be instrumented" default=".*\.Test.*"/>
+        <ea:parameter property="target.reports" default="${target}/reports" description="base directory for reports" />
+        <ea:parameter property="target.coverage.reports" default="${target.reports}/coverage" description="base directory where coverage reports will be generated" />
+
+        <ea:parameter property="cobertura.src.dir" default="${src.main.java}" description="directory containing main sources (used for reports)" />
+	
     </target>
 
     <target name="cobertura:instrument" depends="cobertura:init,abstract-compile:compile,abstract-test:init">
@@ -55,6 +60,7 @@
     </target>
 
     <target name="cobertura:run" depends="cobertura:instrument">
-        <cobertura-report format="html" destdir="${target.report.dir}" srcdir="${src.main.java}" datafile="${cobertura.datafile}"/>
+        <mkdir dir="${target.coverage.reports}"/>
+        <cobertura-report format="html" destdir="${target.coverage.reports}" srcdir="${cobertura.src.dir}" datafile="${cobertura.datafile}"/>
     </target>
 </project>
