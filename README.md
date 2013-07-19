@@ -27,8 +27,8 @@ Organisation attribute is optional. If not specified default one will be used.
 
 |organisation|module|revision|Import type|prefix|
 |------------|------|--------|-----------|------|
-|org.apache.easyant.plugins|abstract-compile|0.9|null||
-|org.apache.easyant.plugins|abstract-test|0.9|null||
+|org.apache.easyant.plugins|abstract-compile|0.9|import||
+|org.apache.easyant.plugins|abstract-test|0.9|import||
 
 ## Module parameters
 
