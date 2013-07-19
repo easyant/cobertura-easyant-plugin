@@ -2,6 +2,8 @@
 
 # Description
 
+This modules provides code coverage integration based on cobertura
+	
 # Example
 
 ```xml
