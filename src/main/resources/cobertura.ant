@@ -59,7 +59,7 @@
         </ea:path>
     </target>
 
-    <target name="cobertura:run" depends="cobertura:instrument">
+    <target name="cobertura:run" depends="cobertura:instrument" description="generates code coverage report">
         <mkdir dir="${target.coverage.reports}"/>
         <cobertura-report format="html" destdir="${target.coverage.reports}" srcdir="${cobertura.src.dir}" datafile="${cobertura.datafile}"/>
     </target>

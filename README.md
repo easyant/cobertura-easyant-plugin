@@ -21,7 +21,7 @@ Organisation attribute is optional. If not specified default one will be used.
 |-----------|-----------|---------------|-------|
 |cobertura:init||||
 |cobertura:instrument|||cobertura:init,abstract-compile:compile,abstract-test:init|
-|cobertura:run|||cobertura:instrument|
+|cobertura:run|generates code coverage report||cobertura:instrument|
 
 ## Imported module
 
