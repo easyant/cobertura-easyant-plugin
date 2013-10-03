@@ -33,13 +33,20 @@
 
 	<target name="setUp" depends="clean">
 		<propertyset id="test.propertyset.ref" />
+		
 		<ivy:settings id="project.ivy.instance" />
 		<ivy:cachepath pathid="compile.test.classpath" file="sample-module.ivy" settingsRef="project.ivy.instance" />
+		<mkdir dir="${target}/main/classes" />
 		<mkdir dir="${target}/test/classes" />
 		<mkdir dir="${target}/integration-test/classes" />
+	    <javac srcdir="src/main/java" destdir="${target}/main/classes"  />
+
 		<javac srcdir="src/test/java" destdir="${target}/test/classes" classpathref="compile.test.classpath" />
 		<javac srcdir="src/integration-test/java" destdir="${target}/integration-test/classes" classpathref="compile.test.classpath" />
 
+		<property name="main.sources" value="src/main/java"/>
+        <property name="main.sources.includes" value="**/*.java"/>
+		<property name="main.sources.excludes" value=""/>
 	</target>
 	<target name="tearDown" depends="clean" />
 
@@ -70,8 +77,7 @@
         <au:fail message="cobertura reports should not be empty">
             <length file="${target.coverage.reports}" length="0" when="gt"/>
         </au:fail>
-        <au:assertFileExists file="${target.coverage.reports}/org.apache.easyant.SampleITTest.html" />
-        <au:assertFileExists file="${target.coverage.reports}/org.apache.easyant.SampleTest.html" />
+        <au:assertFileExists file="${target.coverage.reports}/org.apache.easyant.Sample.html" />
 	</target>
 
 </project>

@@ -40,7 +40,7 @@
 		<ea:parameter property="javac.debug.mode" default="true" description="javac debug mode, true or false" />
 		<ea:parameter property="test.run.fork" default="true" description="Run the tests in a separate VM. (true/false)" />
 	
-		<property name="net.sourceforge.cobertura.datafile" value="${cobertura.datafile}" />
+		<property name="net.sourceforge.cobertura.datafile" value="${basedir}/${cobertura.datafile}" />
 		<augment id="test.propertyset.ref" description="augment property set used by tests">
 			<propertyref name="net.sourceforge.cobertura.datafile" />
 		</augment>
@@ -56,17 +56,17 @@
 		<cobertura-instrument todir="${cobertura.instrumented.classes.dir}" datafile="${cobertura.datafile}">
 			<includeClasses regex="${cobertura.include.classes.regex}" />
 			<excludeClasses regex="${cobertura.exclude.classes.regex}" />
-
-			<fileset dir="${target.test.classes}" erroronmissingdir="false" />
-			<fileset dir="${target.test.integration.classes}" erroronmissingdir="false" />
+			
+			<fileset dir="${target.main.classes}" erroronmissingdir="false" />
 		</cobertura-instrument>
 		<!-- contribute to test runtime classpath and prepend instrumented classes -->
 		<ea:path pathid="run.test.classpath" overwrite="prepend">
-			<fileset dir="${cobertura.instrumented.classes.dir}" />
+            <pathelement location="${cobertura.instrumented.classes.dir}" />
+			<path refid="org.apache.easyant.plugins#cobertura.classpath"/>
 		</ea:path>
 	</target>
 
-	<target name="cobertura:run" depends="cobertura:instrument" description="generates code coverage report">
+	<target name="cobertura:run" depends="cobertura:instrument,abstract-test:test-run,abstract-test:integration-test-run" description="generates code coverage report">
 		<mkdir dir="${target.coverage.reports}" />
 		<cobertura-report format="html" destdir="${target.coverage.reports}" srcdir="${cobertura.src.dir}" datafile="${cobertura.datafile}" />
 	</target>
