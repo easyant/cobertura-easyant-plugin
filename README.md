@@ -27,8 +27,8 @@ Organisation attribute is optional. If not specified default one will be used.
 
 |organisation|module|revision|Import type|prefix|
 |------------|------|--------|-----------|------|
+|org.apache.easyant.plugins|abstract-test|0.10|import||
 |org.apache.easyant.plugins|abstract-compile|0.9|import||
-|org.apache.easyant.plugins|abstract-test|0.9|import||
 
 ## Module parameters
 
@@ -37,6 +37,9 @@ Organisation attribute is optional. If not specified default one will be used.
 |property|description|required|default value|
 |--------|-----------|--------|-------------|
 |cobertura.src.dir|directory containing main sources (used for reports)|false|${src.main.java}|
+|test.run.fork|Run the tests in a separate VM. (true/false)|false|true|
+|javac.debug.mode|javac debug mode, true or false|false|true|
+|net.sourceforge.cobertura.datafile||false||
 |target.reports|base directory for reports|false|${target}/reports|
 |target.coverage.reports|base directory where coverage reports will be generated|false|${target.reports}/coverage|
 |cobertura.exclude.classes.regex|Exclude regex pattern to ignore files to be instrumented|false|.*\.Test.*|
