@@ -14,53 +14,60 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project name="org.apache.easyant.plugins;cobertura" 
-        xmlns:ivy="antlib:org.apache.ivy.ant" 
-        xmlns:ea="antlib:org.apache.easyant">
-        
-    <!--
+<project name="org.apache.easyant.plugins;cobertura" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:ea="antlib:org.apache.easyant">
+
+	<!--
         Force compliance with easyant-core to 0.7 or higher
         <ea:core-version requiredrevision="[0.7,+]" />
     -->
 
-    <ea:plugin module="abstract-test" revision="0.9"/>
-    <ea:plugin module="abstract-compile" revision="0.9"/>
+	<ea:plugin module="abstract-test" revision="0.10" />
+	<ea:plugin module="abstract-compile" revision="0.9" />
 
-    <target name="cobertura:init">
-        <taskdef resource="tasks.properties" classpathref="org.apache.easyant.plugins#cobertura.classpath" />
-        <ea:parameter property="cobertura.instrumented.classes.dir" description="Specify the output directory for the instrumented classes" default="${target}/coverage"/>
-        <ea:parameter property="cobertura.datafile" description="Specify the name of the file to use for storing the metadata about your classes. This is a single file containing serialized Java classes. It contains information about the names of classes in your project, their method names, line numbers, etc. It will be updated as your tests are run, and will be referenced by the Cobertura reporting command." default="${cobertura.instrumented.classes.dir}/cobertura.ser"/>
-        <ea:parameter property="cobertura.include.classes.regex" description="Include regex pattern to select files you want to be instrumented" default=".*"/>
-        <ea:parameter property="cobertura.exclude.classes.regex" description="Exclude regex pattern to ignore files to be instrumented" default=".*\.Test.*"/>
-        <ea:parameter property="target.reports" default="${target}/reports" description="base directory for reports" />
-        <ea:parameter property="target.coverage.reports" default="${target.reports}/coverage" description="base directory where coverage reports will be generated" />
+	<target name="cobertura:init">
+		<taskdef resource="tasks.properties" classpathref="org.apache.easyant.plugins#cobertura.classpath" />
 
-        <ea:parameter property="cobertura.src.dir" default="${src.main.java}" description="directory containing main sources (used for reports)" />
+		<ea:parameter property="cobertura.instrumented.classes.dir" description="Specify the output directory for the instrumented classes" default="${target}/coverage" />
+		<ea:parameter property="cobertura.datafile" description="Specify the name of the file to use for storing the metadata about your classes. This is a single file containing serialized Java classes. It contains information about the names of classes in your project, their method names, line numbers, etc. It will be updated as your tests are run, and will be referenced by the Cobertura reporting command." default="${cobertura.instrumented.classes.dir}/cobertura.ser" />
+		<ea:parameter property="cobertura.include.classes.regex" description="Include regex pattern to select files you want to be instrumented" default=".*" />
+		<ea:parameter property="cobertura.exclude.classes.regex" description="Exclude regex pattern to ignore files to be instrumented" default=".*\.Test.*" />
+		<ea:parameter property="target.reports" default="${target}/reports" description="base directory for reports" />
+		<ea:parameter property="target.coverage.reports" default="${target.reports}/coverage" description="base directory where coverage reports will be generated" />
+
+		<ea:parameter property="cobertura.src.dir" default="${src.main.java}" description="directory containing main sources (used for reports)" />
+
+		<!--force some properties required by cobertura -->
+		<ea:parameter property="javac.debug.mode" default="true" description="javac debug mode, true or false" />
+		<ea:parameter property="test.run.fork" default="true" description="Run the tests in a separate VM. (true/false)" />
 	
-    </target>
+		<property name="net.sourceforge.cobertura.datafile" value="${cobertura.datafile}" />
+		<augment id="test.propertyset.ref" description="augment property set used by tests">
+			<propertyref name="net.sourceforge.cobertura.datafile" />
+		</augment>
+	</target>
 
-    <target name="cobertura:instrument" depends="cobertura:init,abstract-compile:compile,abstract-test:init">
-        <mkdir dir="${cobertura.instrumented.classes.dir}"/>
+	<target name="cobertura:instrument" depends="cobertura:init,abstract-compile:compile,abstract-test:init">
+		<mkdir dir="${cobertura.instrumented.classes.dir}" />
 
-        <!-- delete previous coverage data file -->
-        <delete file="${cobertura.datafile}" />
+		<!-- delete previous coverage data file -->
+		<delete file="${cobertura.datafile}" />
 
-        <!-- do instrumentation -->
-        <cobertura-instrument todir="${cobertura.instrumented.classes.dir}" datafile="${cobertura.datafile}">
-            <includeClasses regex="${cobertura.include.classes.regex}" />
-            <excludeClasses regex="${cobertura.exclude.classes.regex}" />
+		<!-- do instrumentation -->
+		<cobertura-instrument todir="${cobertura.instrumented.classes.dir}" datafile="${cobertura.datafile}">
+			<includeClasses regex="${cobertura.include.classes.regex}" />
+			<excludeClasses regex="${cobertura.exclude.classes.regex}" />
 
-            <fileset dir="${target.test.classes}" erroronmissingdir="false"/>
-            <fileset dir="${target.test.integration.classes}" erroronmissingdir="false"/>
-        </cobertura-instrument>
-        <!-- contribute to test runtime classpath and prepend instrumented classes -->
-        <ea:path pathid="run.test.classpath" overwrite="prepend">
-            <fileset dir="${cobertura.instrumented.classes.dir}"/>
-        </ea:path>
-    </target>
+			<fileset dir="${target.test.classes}" erroronmissingdir="false" />
+			<fileset dir="${target.test.integration.classes}" erroronmissingdir="false" />
+		</cobertura-instrument>
+		<!-- contribute to test runtime classpath and prepend instrumented classes -->
+		<ea:path pathid="run.test.classpath" overwrite="prepend">
+			<fileset dir="${cobertura.instrumented.classes.dir}" />
+		</ea:path>
+	</target>
 
-    <target name="cobertura:run" depends="cobertura:instrument" description="generates code coverage report">
-        <mkdir dir="${target.coverage.reports}"/>
-        <cobertura-report format="html" destdir="${target.coverage.reports}" srcdir="${cobertura.src.dir}" datafile="${cobertura.datafile}"/>
-    </target>
+	<target name="cobertura:run" depends="cobertura:instrument" description="generates code coverage report">
+		<mkdir dir="${target.coverage.reports}" />
+		<cobertura-report format="html" destdir="${target.coverage.reports}" srcdir="${cobertura.src.dir}" datafile="${cobertura.datafile}" />
+	</target>
 </project>

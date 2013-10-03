@@ -14,48 +14,64 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project name="org.apache.easyant.plugins;cobertura-test" 
-    xmlns:au="antlib:org.apache.ant.antunit"
-    xmlns:ivy="antlib:org.apache.ivy.ant"
-    xmlns:ea="antlib:org.apache.easyant">
-    
-    <!-- Import your plugin -->
-    <property name="target" value="target/test-antunit"/>
-    <!-- configure easyant in current project -->
-    <ea:configure-easyant-ivy-instance />
-    <!-- import our local plugin -->
-    <ea:import-test-module moduleIvy="../../../module.ivy" sourceDirectory="../../main/resources"/>
- 
-    <!-- Defines a setUp / tearDown (before each test) that cleans the environnement --> 
-    <target name="clean" description="remove stale build artifacts before / after each test">
-        <delete dir="${basedir}" includeemptydirs="true">
-            <include name="**/target/**"/>
-            <include name="**/lib/**"/>
-        </delete>
-    </target>
-    
-    <target name="setUp" depends="clean"/>
-    <target name="tearDown" depends="clean"/>
+<project name="org.apache.easyant.plugins;cobertura-test" xmlns:au="antlib:org.apache.ant.antunit" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:ea="antlib:org.apache.easyant">
 
-    <target name="test-cobertura:init" depends="cobertura:init">
-        <au:assertPropertyEquals name="cobertura.instrumented.classes.dir" value="${target}/coverage"/>
-        <au:assertPropertyEquals name="cobertura.datafile" value="${cobertura.instrumented.classes.dir}/cobertura.ser"/>
-        <au:assertPropertyEquals name="cobertura.include.classes.regex" value=".*"/>
-        <au:assertPropertyEquals name="cobertura.exclude.classes.regex" value=".*\.Test.*"/>
-        <au:assertPropertyEquals name="target.reports" value="${target}/reports"/>
-        <au:assertPropertyEquals name="target.coverage.reports" value="${target.reports}/coverage"/>
-        <au:assertPropertyEquals name="cobertura.src.dir" value="${src.main.java}"/>
-       
-    </target>
-    
-    <target name="test-cobertura:instrument" depends="cobertura:instrument">
-        <au:assertFileExists file="${cobertura.instrumented.classes.dir}"/>
-        <au:assertFileExists file="${cobertura.datafile}"/>
-        <!-- TODO: provide a java test case and check instrumented classes are generated and added to test classpath -->
-    </target>
-    
-    <target name="test-cobertura:run" depends="cobertura:run">
-        <au:assertFileExists file="${target.coverage.reports}"/>
-    </target>
-    
+	<!-- Import your plugin -->
+	<property name="target" value="target/test-antunit" />
+	<!-- configure easyant in current project -->
+	<ea:configure-easyant-ivy-instance />
+	<!-- import our local plugin -->
+	<ea:import-test-module moduleIvy="../../../module.ivy" sourceDirectory="../../main/resources" />
+
+	<!-- Defines a setUp / tearDown (before each test) that cleans the environnement -->
+	<target name="clean" description="remove stale build artifacts before / after each test">
+		<delete dir="${basedir}" includeemptydirs="true">
+			<include name="**/target/**" />
+			<include name="**/lib/**" />
+		</delete>
+	</target>
+
+	<target name="setUp" depends="clean">
+		<propertyset id="test.propertyset.ref" />
+		<ivy:settings id="project.ivy.instance" />
+		<ivy:cachepath pathid="compile.test.classpath" file="sample-module.ivy" settingsRef="project.ivy.instance" />
+		<mkdir dir="${target}/test/classes" />
+		<mkdir dir="${target}/integration-test/classes" />
+		<javac srcdir="src/test/java" destdir="${target}/test/classes" classpathref="compile.test.classpath" />
+		<javac srcdir="src/integration-test/java" destdir="${target}/integration-test/classes" classpathref="compile.test.classpath" />
+
+	</target>
+	<target name="tearDown" depends="clean" />
+
+	<target name="test-cobertura:init" depends="cobertura:init">
+		<au:assertPropertyEquals name="cobertura.instrumented.classes.dir" value="${target}/coverage" />
+		<au:assertPropertyEquals name="cobertura.datafile" value="${cobertura.instrumented.classes.dir}/cobertura.ser" />
+		<au:assertPropertyEquals name="cobertura.include.classes.regex" value=".*" />
+		<au:assertPropertyEquals name="cobertura.exclude.classes.regex" value=".*\.Test.*" />
+		<au:assertPropertyEquals name="target.reports" value="${target}/reports" />
+		<au:assertPropertyEquals name="target.coverage.reports" value="${target.reports}/coverage" />
+		<au:assertPropertyEquals name="cobertura.src.dir" value="${src.main.java}" />
+
+		<au:assertPropertyEquals name="javac.debug.mode" value="true" />
+		<au:assertPropertyEquals name="test.run.fork" value="true" />
+
+	</target>
+
+	<target name="test-cobertura:instrument" depends="cobertura:instrument">
+		<au:assertFileExists file="${cobertura.instrumented.classes.dir}" />
+		<au:assertFileExists file="${cobertura.datafile}" />
+		<au:fail message="cobertura datafile should not be empty">
+			<length file="${cobertura.datafile}" length="0" when="gt"/>
+		</au:fail>
+	</target>
+
+	<target name="test-cobertura:run" depends="cobertura:run">
+		<au:assertFileExists file="${target.coverage.reports}" />
+        <au:fail message="cobertura reports should not be empty">
+            <length file="${target.coverage.reports}" length="0" when="gt"/>
+        </au:fail>
+        <au:assertFileExists file="${target.coverage.reports}/org.apache.easyant.SampleITTest.html" />
+        <au:assertFileExists file="${target.coverage.reports}/org.apache.easyant.SampleTest.html" />
+	</target>
+
 </project>
